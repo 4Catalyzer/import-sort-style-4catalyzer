@@ -15,7 +15,7 @@ function isAliasedModule({ moduleName }) {
 }
 
 function isCssModule({ moduleName }) {
-  return moduleName.includes('@qsi/ui-theme') || moduleName.includes('.css');
+  return moduleName.includes('.css');
 }
 
 module.exports = (styleApi) => {
