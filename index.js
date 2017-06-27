@@ -10,10 +10,6 @@ const aliased = [
   'utils',
 ];
 
-function isInternalModule({ moduleName }) {
-  return moduleName.startsWith('@qsi/');
-}
-
 function isAliasedModule({ moduleName }) {
   return aliased.some(n => moduleName.startsWith(n));
 }
@@ -38,7 +34,6 @@ module.exports = (styleApi) => {
 
   const byModuleName = moduleName(naturally);
   const isAbsoluteModule = and(
-    not(isInternalModule),
     not(isAliasedModule),
     not(isRelativeModule)
   );
@@ -57,11 +52,6 @@ module.exports = (styleApi) => {
     { separator: true },
 
     {
-      match: and(isInternalModule, not(isCssModule)),
-      sort: byModuleName,
-      sortNamedMembers: alias(unicode),
-    },
-    {
       match: and(isAliasedModule, not(isCssModule)),
       sort: byModuleName,
       sortNamedMembers: alias(unicode),
@@ -76,7 +66,6 @@ module.exports = (styleApi) => {
     // finally css
     { match: and(hasNoMember, isCssModule), sort: byModuleName },
     { match: and(isAbsoluteModule, isCssModule), sort: byModuleName },
-    { match: and(isInternalModule, isCssModule), sort: byModuleName },
     { match: and(isAliasedModule, isCssModule), sort: byModuleName },
     { match: isCssModule, sort: [dotSegmentCount, byModuleName] },
   ];
