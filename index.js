@@ -15,16 +15,12 @@ const aliased = [
   'utils',
 ];
 
-function isInternalModule({ moduleName }) {
-  return moduleName.startsWith('@qsi/');
-}
-
 function isAliasedModule({ moduleName }) {
   return aliased.some(n => moduleName.startsWith(n));
 }
 
 function isCssModule({ moduleName }) {
-  return moduleName.includes('@qsi/ui-theme') || moduleName.includes('.css');
+  return moduleName.includes('.css');
 }
 
 const sort = (styleApi) => {
@@ -42,7 +38,6 @@ const sort = (styleApi) => {
 
   const byModuleName = moduleName(pathSort);
   const isAbsoluteModule = and(
-    not(isInternalModule),
     not(isAliasedModule),
     not(isRelativeModule)
   );
@@ -61,11 +56,6 @@ const sort = (styleApi) => {
     { separator: true },
 
     {
-      match: and(isInternalModule, not(isCssModule)),
-      sort: byModuleName,
-      sortNamedMembers: alias(unicode),
-    },
-    {
       match: and(isAliasedModule, not(isCssModule)),
       sort: byModuleName,
       sortNamedMembers: alias(unicode),
@@ -80,7 +70,6 @@ const sort = (styleApi) => {
     // finally css
     { match: and(hasNoMember, isCssModule), sort: byModuleName },
     { match: and(isAbsoluteModule, isCssModule), sort: byModuleName },
-    { match: and(isInternalModule, isCssModule), sort: byModuleName },
     { match: and(isAliasedModule, isCssModule), sort: byModuleName },
     { match: isCssModule, sort: [dotSegmentCount, byModuleName] },
   ];
